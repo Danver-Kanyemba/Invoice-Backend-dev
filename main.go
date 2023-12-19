@@ -10,19 +10,19 @@ import (
 )
 
 func main() {
-	log.Println("Loading")
+	log.Println("Server started")
 	r := gin.Default()
 	r.Use(cors.Default())
 
-	r.GET("/home", func(c *gin.Context) {
+	r.GET("/status_check", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
+			"message": "Server reached",
 		})
 	})
 
 	r.GET("/AllSalesInvoice", salesInvoice.GetAllInvoices)
 
-	r.POST("", salesInvoice.Add)
+	r.POST("AddInvoice", salesInvoice.Add)
 
 	r.Run()
 }

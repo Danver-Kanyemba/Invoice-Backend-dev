@@ -3,7 +3,6 @@ package salesInvoice
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -54,4 +53,60 @@ func GetAllInvoices(c *gin.Context) {
 	}
 
 	c.Data(http.StatusOK, "application/json; charset=utf-8", jsonData)
+}
+
+func GetSpecificResp(c *gin.Context) {
+	log.Println("Getting specific Invoice")
+	// Execute the query
+	objectIDStr := c.Param("id")
+	objectID, err := primitive.ObjectIDFromHex(objectIDStr)
+	if err != nil {
+		log.Println(err)
+	}
+	filter := bson.M{"_id": objectID}
+
+	// options := options.Find().SetLimit(1)
+
+	cur, err := client.Collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Printf("Error executing find query for single response on edit: %v\n", err)
+		return
+	}
+	defer cur.Close(context.Background())
+
+	log.Println("getting Sales Invoice From DB")
+
+	// Define a slice to store the query results
+	var results []bson.M
+	count := 0
+	// Iterate through the cursor and decode each document into a bson.M map
+	for cur.Next(context.Background()) {
+		count++
+		var result bson.M
+
+		err := cur.Decode(&result)
+		if err != nil {
+			log.Printf("Error decoding document for edit: %v\n", err)
+			return
+		}
+		results = append(results, result)
+		jsonData, err := json.Marshal(results)
+		if err != nil {
+			log.Printf("Error converting to JSON: %v\n", err)
+			return
+		}
+
+		c.Data(http.StatusOK, "application/json; charset=utf-8", jsonData)
+	}
+	if count == 0 {
+		log.Println("No values in DB")
+		data := gin.H{
+			"message": "API token not found in DB",
+			"status":  400,
+		}
+		// Set the content type to JSON
+		c.Header("Content-Type", "application/json")
+
+		c.IndentedJSON(http.StatusBadRequest, data)
+	}
 }

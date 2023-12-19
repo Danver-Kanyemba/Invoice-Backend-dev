@@ -2,9 +2,11 @@ package salesInvoice
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"invoice/app/client"
 	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Add(c *gin.Context) {
@@ -13,9 +15,13 @@ func Add(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
 		return
 	}
+
+	// add time
+	jsonData["created_at"] = time.Now()
+
 	_, err := client.Collection.InsertOne(context.Background(), jsonData)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to insert JSON data: " + err})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 
 		return
 	}
