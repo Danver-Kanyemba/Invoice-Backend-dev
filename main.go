@@ -24,5 +24,5 @@ func main() {
 
 	r.POST("AddInvoice", salesInvoice.Add)
 
-	r.Run()
+	r.Run(":3066")
 }
