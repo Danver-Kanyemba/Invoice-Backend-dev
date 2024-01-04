@@ -21,7 +21,8 @@ func main() {
 	})
 
 	r.GET("/AllSalesInvoice", salesInvoice.GetAllInvoices)
-
+	r.GET("/AllProducts", salesInvoice.GetAllProducts)
+	r.GET("/Invoice/:id", salesInvoice.GetSpecificResp)
 	r.POST("AddInvoice", salesInvoice.Add)
 
 	r.Run(":3066")

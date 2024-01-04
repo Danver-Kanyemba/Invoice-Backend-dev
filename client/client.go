@@ -8,6 +8,7 @@ import (
 )
 
 var Collection *mongo.Collection
+var ProductCollection *mongo.Collection
 
 func init() {
 	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
@@ -16,4 +17,5 @@ func init() {
 		log.Fatal(err)
 	}
 	Collection = client.Database("invoicedb").Collection("sales_invoice")
+	ProductCollection = client.Database("invoicedb").Collection("Products")
 }

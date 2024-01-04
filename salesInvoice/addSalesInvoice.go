@@ -25,5 +25,8 @@ func Add(c *gin.Context) {
 
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Invoice added successfully"})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Invoice added successfully",
+		"status":  200,
+	})
 }
